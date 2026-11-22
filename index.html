@@ -1079,6 +1079,13 @@ body[data-ui] .srow .ico,body[data-ui] .slist .ico{width:24px;height:24px}
 .onb-react{text-align:center}.onb-react .oa-av{width:150px;height:150px;margin:6px auto 10px;border-radius:22px;overflow:hidden;box-shadow:0 0 40px rgba(170,120,255,.45)}
 .onb-react .oa-av img,.onb-react .oa-av svg{width:100%;height:100%;object-fit:cover}
 .onb-react q{display:block;font:28px/1.25 'Marck Script',cursive;margin:8px 0 6px;quotes:none}
+#onb .oa2{display:flex;flex-direction:column;align-items:center;text-align:center;padding:0 28px;max-width:420px}
+#onb .oa2ico{margin-bottom:10px;animation:opulse 3s ease-in-out infinite}
+#onb .oa2steps{margin-top:18px;text-align:left;display:flex;flex-direction:column;gap:10px;width:100%}
+#onb .oa2st{display:flex;gap:12px;align-items:flex-start;background:rgba(20,14,34,.55);border:1px solid rgba(215,200,255,.2);border-radius:16px;padding:11px 13px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+#onb .oa2st b{flex:none;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font:800 12px Manrope,sans-serif;color:#fff;background:linear-gradient(135deg,#7b4dff,#d64aa8)}
+#onb .oa2st span{font:500 14px/1.45 Manrope,Nunito,sans-serif;color:#e4dcf7}
+#onb .oa2st span b{all:unset;font-weight:800;color:#fff}
 </style>
 </head>
 <body>
@@ -2392,7 +2399,7 @@ function a2hsStartSheet(){const has=Object.keys(S.books).length>0;
 <p class="hint center" style="margin:-4px 0 14px;line-height:1.45">${has?L('Чтобы твои книги и прогресс точно не потерялись, добавь Selmoire на экран «Домой». Браузер может сам стереть данные, если долго не заходить.','To make sure your books and progress are never lost, add Selmoire to your Home Screen. The browser may erase data if you don’t visit for a while.'):L('Добавь Selmoire на экран «Домой», открой через иконку и начинай уже там. Иначе браузер может стереть прогресс, а иконка не увидит то, что ты записала здесь.','Add Selmoire to your Home Screen and start inside the icon. Otherwise the browser may erase your progress, and the icon won’t see what you logged here.')}</p>
 <button class="btn primary big" style="width:100%" data-a="a2hsHow">${L('Показать, как добавить','Show me how')}</button>
 <button class="btn ghost big" style="width:100%;margin-top:8px" data-a="a2hsLater">${L('Пока продолжить в браузере','Continue in the browser for now')}</button>`}
-function startFlow(){if(IS_MOB&&!IS_STANDALONE&&!S.a2hsPop){openSheet(a2hsStartSheet(),'intro');return}if(!S.seenIntro)onbOpen()}
+function startFlow(){if(!S.seenIntro){onbOpen();return}if(IS_MOB&&!IS_STANDALONE&&!S.a2hsPop)openSheet(a2hsStartSheet(),'intro')}
 function a2hsSheet(){const st=(n,t)=>`<div style="display:flex;gap:10px;margin:0 0 10px"><b style="min-width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-size:12px">${n}</b><span style="flex:1;line-height:1.4">${t}</span></div>`;
   const steps=IS_IOS?[L('Открой сайт именно в <b>Safari</b>. Если открыла из Телеграма или Инстаграма — нажми «•••» и выбери «Открыть в Safari»','Open the site in <b>Safari</b>. If you came from Telegram or Instagram, tap “•••” and choose “Open in Safari”'),L('Нажми кнопку «Поделиться» — квадрат со стрелкой вверх. Если её не видно, сначала нажми «•••» внизу','Tap the Share button — a square with an up arrow. If you can’t see it, tap “•••” at the bottom first'),L('Пролистай вниз и выбери <b>«На экран „Домой“»</b>, потом «Добавить»','Scroll down, choose <b>“Add to Home Screen”</b>, then “Add”'),L('Теперь открывай Selmoire только через иконку 🌙','From now on, open Selmoire only from the icon 🌙')]
    :[L('Открой сайт в <b>Chrome</b>','Open the site in <b>Chrome</b>'),L('Нажми «⋮» в правом верхнем углу','Tap “⋮” in the top right corner'),L('Выбери <b>«Добавить на главный экран»</b> или «Установить приложение»','Choose <b>“Add to Home screen”</b> or “Install app”'),L('Теперь открывай Selmoire только через иконку 🌙','From now on, open Selmoire only from the icon 🌙')];
@@ -2883,11 +2890,26 @@ function onbDeck(){const env=onbEnvImg(),hero=(typeof HERO_FULL!=='undefined'&&H
 <div class="obot">${IS_STANDALONE?`<button class="chip" data-a="backup">${L('📥 Уже читала в браузере? Перенеси прогресс','📥 Used it in the browser before? Bring your progress')}</button>`:''}<button class="olater" data-a="onbLater">${L('Выберу позже','Choose later')}</button></div>`}
 function onbType(el,t){clearInterval(onbLineT);let i=0;el.textContent='';onbLineT=setInterval(()=>{el.textContent=t.slice(0,++i);if(i>=t.length)clearInterval(onbLineT)},42)}
 function onbClose(){const o=$('#onb');if(!o)return;o.style.transition='opacity .45s';o.style.opacity='0';setTimeout(()=>o.remove(),460)}
+function onbToDeck(old){const o=$('#onb');if(!o)return;const w=document.createElement('div');w.className='ostage gone';w.style.justifyContent='stretch';w.innerHTML=onbDeck();o.appendChild(w);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>w.classList.remove('gone')));if(old)setTimeout(()=>old.remove(),650);
+  const dk=w.querySelector('#onbDeck');dk.addEventListener('scroll',()=>{const k=Math.round(dk.scrollLeft/Math.max(1,dk.clientWidth));w.querySelectorAll('#onbDots i').forEach((x,j)=>x.classList.toggle('on',j===k))},{passive:true})}
+function onbA2HTML(how){
+  const steps=IS_IOS?[L('Открой сайт именно в <b>Safari</b>. Если открыла из Телеграма или Инстаграма, нажми «•••» и выбери «Открыть в Safari»','Open the site in <b>Safari</b>. If you came from Telegram or Instagram, tap “•••” and choose “Open in Safari”'),L('Нажми «Поделиться», это квадрат со стрелкой вверх. Если его не видно, сначала нажми «•••» внизу','Tap Share, the square with an up arrow. If you can’t see it, tap “•••” at the bottom first'),L('Пролистай вниз и выбери <b>«На экран „Домой“»</b>, потом «Добавить»','Scroll down, choose <b>“Add to Home Screen”</b>, then “Add”'),L('Открывай Selmoire через новую иконку 🌙','Open Selmoire from the new icon 🌙')]
+    :[L('Открой сайт в <b>Chrome</b>','Open the site in <b>Chrome</b>'),L('Нажми «⋮» в правом верхнем углу','Tap “⋮” in the top right corner'),L('Выбери <b>«Добавить на главный экран»</b> или «Установить приложение»','Choose <b>“Add to Home screen”</b> or “Install app”'),L('Открывай Selmoire через новую иконку 🌙','Open Selmoire from the new icon 🌙')];
+  const ico=`<svg viewBox="0 0 120 120" width="118" height="118"><defs><radialGradient id="oa2g" cx="50%" cy="45%" r="60%"><stop offset="0" stop-color="#b9a2ff" stop-opacity=".55"/><stop offset="1" stop-color="#b9a2ff" stop-opacity="0"/></radialGradient></defs><circle cx="60" cy="60" r="58" fill="url(#oa2g)"/><rect x="33" y="14" width="54" height="92" rx="12" fill="rgba(20,14,34,.85)" stroke="#e6dcff" stroke-width="2.5"/><rect x="52" y="20" width="16" height="4" rx="2" fill="#e6dcff" opacity=".6"/><path d="M66 50a13 13 0 1 1-12-16a10 10 0 0 0 12 16z" fill="#efeaff"/><circle cx="72" cy="40" r="1.6" fill="#efeaff"/><circle cx="47" cy="66" r="1.2" fill="#efeaff"/><path d="M60 74v18M52 84l8 8 8-8" stroke="#c8b6ff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  return `<div class="oa2"><div class="oa2ico">${ico}</div>
+<div class="okick">${L('Один маленький шаг','One small step')}</div>
+<div class="ottl">${L('Сначала на экран «Домой»','First, add to Home Screen')}</div>
+<div class="otx">${L('Так Selmoire откроется как приложение, а твои книги и прогресс не потеряются. Браузер иногда сам стирает данные сайтов.','Selmoire will open like an app, and your books and progress won’t get lost. Browsers sometimes erase site data.')}</div>
+${how?`<div class="oa2steps">${steps.map((t,i)=>`<div class="oa2st"><b>${i+1}</b><span>${t}</span></div>`).join('')}</div>`:`<button class="octa" data-a="onbA2How">${L('Показать, как добавить','Show me how')}</button>`}
+<button class="olater" style="margin-top:14px" data-a="onbA2Skip">${L('Пока продолжить в браузере','Continue in the browser for now')}</button></div>`}
 const onbActions={
   onbEnter:()=>{const o=$('#onb'),st=$('#onbIntro');if(!o||!st)return;st.classList.add('gone');o.classList.add('deck');
-    const w=document.createElement('div');w.className='ostage gone';w.style.justifyContent='stretch';w.innerHTML=onbDeck();o.appendChild(w);
-    requestAnimationFrame(()=>requestAnimationFrame(()=>w.classList.remove('gone')));setTimeout(()=>st.remove(),650);
-    const dk=w.querySelector('#onbDeck');dk.addEventListener('scroll',()=>{const k=Math.round(dk.scrollLeft/Math.max(1,dk.clientWidth));w.querySelectorAll('#onbDots i').forEach((x,j)=>x.classList.toggle('on',j===k))},{passive:true})},
+    if(IS_MOB&&!IS_STANDALONE&&!S.a2hsPop){const w=document.createElement('div');w.className='ostage gone';w.id='onbA2';w.innerHTML=onbA2HTML(false);o.appendChild(w);
+      requestAnimationFrame(()=>requestAnimationFrame(()=>w.classList.remove('gone')));setTimeout(()=>st.remove(),650);return}
+    onbToDeck(st)},
+  onbA2How:()=>{const w=$('#onbA2');if(w)w.innerHTML=onbA2HTML(true)},
+  onbA2Skip:()=>{S.a2hsPop=1;save();const w=$('#onbA2');if(!w)return;w.classList.add('gone');setTimeout(()=>{w.remove()},650);onbToDeck(null)},
   onbSeal:()=>{const v=$('#onbEnv');if(!v)return;if(v.classList.contains('open')){onbActions.onbPick({v:'boys'});return}
     v.classList.add('open');try{navigator.vibrate&&navigator.vibrate(25)}catch(_){}
     const t=$('#onbT1'),x=$('#onbX1'),b=$('#onbB1');if(t)t.textContent=L('Он в маске','He wears a mask');if(x)x.textContent=L('Читай, и он снимет ее. Пишет письма, ревнует к книжным героям и зовет на свидания.','Read and he will take it off. He writes letters, gets jealous of book heroes and asks you out.');
