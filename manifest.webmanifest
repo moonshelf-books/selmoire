@@ -1,0 +1,30 @@
+{
+ "name": "Selmoire",
+ "short_name": "Selmoire",
+ "description": "Selmoire — трекер чтения: книжные духи, бойфренды и хранители растут от прочитанных страниц",
+ "start_url": "./",
+ "scope": "./",
+ "display": "standalone",
+ "orientation": "portrait",
+ "background_color": "#130c2c",
+ "theme_color": "#160f33",
+ "lang": "ru",
+ "icons": [
+  {
+   "src": "icons/icon-192.png",
+   "sizes": "192x192",
+   "type": "image/png"
+  },
+  {
+   "src": "icons/icon-512.png",
+   "sizes": "512x512",
+   "type": "image/png"
+  },
+  {
+   "src": "icons/icon-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "maskable"
+  }
+ ]
+}
