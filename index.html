@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<meta name="app-ver" content="2026-11-22-1">
+<meta name="app-ver" content="2026-11-22-2">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -2140,7 +2140,7 @@ function brandMark(x,y){const ui=document.body.dataset.ui||'',t='SELMOIRE',sp=22
   let w=mw;for(const ch of t)w+=x.measureText(ch).width+sp;w-=sp;let cx=540-w/2;
   if(ui==='shine'){const g=x.createLinearGradient(cx,0,cx+w,0);g.addColorStop(0,'#c79bff');g.addColorStop(.45,'#ff6fd8');g.addColorStop(1,'#7fd8ff');x.fillStyle=g}else x.fillStyle=ui==='noir'?'#ff3a4a':(cssVar('--accent')||'#c79bff');
   x.shadowColor='rgba(0,0,0,.45)';x.shadowBlur=14;x.font='400 52px Nunito, system-ui, sans-serif';x.fillText('☾',cx,y+2);cx+=mw;x.font='800 44px Nunito, system-ui, sans-serif';for(const ch of t){x.fillText(ch,cx,y);cx+=x.measureText(ch).width+sp}
-  x.textAlign='center';x.fillStyle='rgba(255,255,255,.88)';x.font='700 32px Nunito, system-ui, sans-serif';x.fillText('@selmoire',540,y+58);x.restore()}
+  x.textAlign='center';x.fillStyle='rgba(255,255,255,.88)';x.font='700 32px Nunito, system-ui, sans-serif';x.fillText('@selmoire.books',540,y+58);x.restore()}
 const CARD_HERO_DONE=['Я ревновал к нему все {d}','Надеюсь, он был хуже меня','Ты вздыхала на каждой странице. Я все слышал','Теперь моя очередь','Закрыла книгу? Иди сюда','Я видел, как ты улыбалась. Не мне','Он вымышленный. Я нет','Еще одна книга, и я начну ревновать всерьез'];
 const CARD_HERO_READ=['Читай, я рядом','Не отвлекайся. Хотя нет, отвлекись на меня','Я подожду. Но недолго','Он тебе нравится больше меня?','Дочитаешь, и сразу ко мне'];
 const CARD_PET_DONE=['Мы справились!','Я грел тебе место все {d}','Еще одну? Ну пожалуйста','Я горжусь тобой'];
