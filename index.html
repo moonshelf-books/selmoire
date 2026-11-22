@@ -2,6 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
+<meta name="app-ver" content="2026-11-22-1">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -1099,6 +1100,10 @@ body[data-ui] .srow .ico,body[data-ui] .slist .ico{width:24px;height:24px}
 #onb .oa2st b{flex:none;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font:800 12px Manrope,sans-serif;color:#fff;background:linear-gradient(135deg,#7b4dff,#d64aa8)}
 #onb .oa2st span{font:500 14px/1.45 Manrope,Nunito,sans-serif;color:#e4dcf7}
 #onb .oa2st span b{all:unset;font-weight:800;color:#fff}
+#updBar{position:fixed;left:12px;right:12px;top:calc(env(safe-area-inset-top) + 10px);z-index:8000;display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:18px;border:1px solid rgba(215,200,255,.35);background:rgba(18,12,32,.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);color:#fff;text-align:left;box-shadow:0 14px 40px rgba(0,0,0,.55),0 0 30px rgba(150,110,255,.25);transform:translateY(-140%);transition:transform .5s cubic-bezier(.2,1.2,.4,1);font-family:Manrope,Nunito,sans-serif;cursor:pointer}
+#updBar.on{transform:none}#updBar.go{opacity:.6}
+#updBar .ub-i{font-size:22px}#updBar .ub-t{flex:1;display:flex;flex-direction:column;gap:2px}#updBar .ub-t b{font-size:15px}#updBar .ub-t small{font-size:12px;color:#cfc4ee}
+#updBar .ub-go{flex:none;padding:9px 14px;border-radius:999px;font-weight:800;font-size:13px;background:linear-gradient(100deg,#7b4dff,#d64aa8)}
 </style>
 </head>
 <body>
@@ -2233,14 +2238,20 @@ async function yearCard(){const D=yearData(),{y,pages,days,books,fa,fe}=D;
   const tiles=[[books.length,plural(books.length,['книга','книги','книг'])],[pages,plural(pages,PG)],[days,plural(days,DY)+' с книгой']];
   tiles.forEach(([v,l],i)=>{const tx=80+i*320,ty=450;rr(x,tx,ty,280,170,30);x.fillStyle='rgba(20,14,34,.6)';x.fill();x.strokeStyle='rgba(215,200,255,.3)';x.lineWidth=2;x.stroke();
     x.fillStyle='#fff';x.font='600 76px "Cormorant Garamond", Georgia, serif';x.fillText(String(v),tx+140,ty+92);x.fillStyle='#cfc4ee';x.font='700 26px Manrope, Nunito, sans-serif';x.fillText(l,tx+140,ty+138)});
-  const cov=books.slice(0,6),CW=210,CH=306,GAP=24;
-  if(cov.length){const cols=Math.min(3,cov.length),rows=Math.ceil(cov.length/3);let idx=0;
-    for(let r=0;r<rows;r++){const n=Math.min(3,cov.length-r*3),w=n*CW+(n-1)*GAP,sx=540-w/2;for(let c=0;c<n;c++){await drawCover(x,cov[idx++],sx+c*(CW+GAP),672+r*(CH+GAP),CW,CH,16)}}
-    if(books.length>6){x.fillStyle='#d9ccff';x.font='700 28px Manrope, Nunito, sans-serif';x.fillText(`и еще ${books.length-6} ${plural(books.length-6,['книга','книги','книг'])}`,540,672+2*(CH+GAP)+26)}}
-  let ly=cov.length>3?(books.length>6?1410:1370):cov.length?1060:760;
-  if(fa){x.fillStyle='#bfb3e6';x.font='800 24px Manrope, Nunito, sans-serif';x.fillText('ЛЮБИМЫЙ АВТОР',540,ly);x.fillStyle='#fff';x.font='italic 600 46px "Cormorant Garamond", Georgia, serif';wrapT(x,fa[0],900,1).forEach(l=>x.fillText(l,540,ly+54));ly+=110}
-  if(fe){x.fillStyle='#bfb3e6';x.font='800 24px Manrope, Nunito, sans-serif';x.fillText('ЭМОЦИЯ ГОДА',540,ly);x.fillStyle='#fff';x.font='600 44px Nunito, sans-serif';x.fillText(EMO[fe[0]][0]+'  '+EMO[fe[0]][1],540,ly+56);ly+=110}
-  const p=activePet();if(p&&p.hatched&&ly<1690){const boy=kindOf(p)==='boy';const R=58,cx=540-150,cy=ly+40;
+  const N=books.length,GX=940,TOP=660,MAXH=N>12?890:760;let cols=3,CW,CH,GAP,show=N;
+  for(cols=3;cols<=8;cols++){GAP=cols<=4?22:cols<=6?16:12;CW=(Math.min(GX,cols*240)-(cols-1)*GAP)/cols;CH=CW*1.46;if(Math.ceil(N/cols)*CH+(Math.ceil(N/cols)-1)*GAP<=MAXH||cols===8)break}
+  {const rowsFit=Math.max(1,Math.floor((MAXH+GAP)/(CH+GAP)));if(Math.ceil(N/cols)>rowsFit)show=rowsFit*cols-1}
+  const cov=books.slice(0,show);let gy=TOP;
+  if(cov.length){const rows=Math.ceil(cov.length/cols);let idx=0;
+    for(let r=0;r<rows;r++){const n=Math.min(cols,cov.length-r*cols),w=n*CW+(n-1)*GAP,sx=540-w/2;for(let c=0;c<n;c++){await drawCover(x,cov[idx++],sx+c*(CW+GAP),TOP+r*(CH+GAP),CW,CH,cols>5?8:14)}}
+    gy=TOP+rows*CH+(rows-1)*GAP;
+    if(N>show){x.fillStyle='#d9ccff';x.font='700 28px Manrope, Nunito, sans-serif';x.fillText(`и еще ${N-show} ${plural(N-show,['книга','книги','книг'])}`,540,gy+44);gy+=50}}
+  let ly=cov.length?gy+66:760;
+  if(fa&&fe){x.fillStyle='#bfb3e6';x.font='800 22px Manrope, Nunito, sans-serif';x.fillText('ЛЮБИМЫЙ АВТОР',300,ly);x.fillText('ЭМОЦИЯ ГОДА',780,ly);
+    x.fillStyle='#fff';x.font='italic 600 42px "Cormorant Garamond", Georgia, serif';wrapT(x,fa[0],430,1).forEach(l=>x.fillText(l,300,ly+50));x.font='600 40px Nunito, sans-serif';x.fillText(EMO[fe[0]][0]+' '+EMO[fe[0]][1],780,ly+50);ly+=96}
+  else{if(fa){x.fillStyle='#bfb3e6';x.font='800 24px Manrope, Nunito, sans-serif';x.fillText('ЛЮБИМЫЙ АВТОР',540,ly);x.fillStyle='#fff';x.font='italic 600 46px "Cormorant Garamond", Georgia, serif';wrapT(x,fa[0],900,1).forEach(l=>x.fillText(l,540,ly+54));ly+=110}
+    if(fe){x.fillStyle='#bfb3e6';x.font='800 24px Manrope, Nunito, sans-serif';x.fillText('ЭМОЦИЯ ГОДА',540,ly);x.fillStyle='#fff';x.font='600 44px Nunito, sans-serif';x.fillText(EMO[fe[0]][0]+'  '+EMO[fe[0]][1],540,ly+56);ly+=110}}
+  const p=activePet();if(p&&p.hatched&&ly<1700){const boy=kindOf(p)==='boy';const R=58,cx=540-150,cy=ly+40;
     x.save();x.beginPath();x.arc(cx,cy,R,0,7);x.closePath();x.shadowColor='rgba(170,120,255,.8)';x.shadowBlur=30;x.fillStyle='#120c1e';x.fill();x.restore();
     x.save();x.beginPath();x.arc(cx,cy,R,0,7);x.clip();try{let I;if(boy&&typeof HERO_FULL!=='undefined'&&HERO_FULL[p.species]){const F=HERO_FULL[p.species];I=await loadImg(stageOf(p)===0&&F[1]?F[1]:F[0]);const k=Math.max(2*R/I.width,2*R/I.height);x.drawImage(I,cx-I.width*k/2,cy-R*.95,I.width*k,I.height*k)}else{I=await loadImg(svgUrl(creatureSVG(p.species,stageOf(p),'happy',{outfit:p.outfit})));x.drawImage(I,cx-R,cy-R,2*R,2*R)}}catch(e){}x.restore();
     x.beginPath();x.arc(cx,cy,R,0,7);x.strokeStyle='rgba(225,210,255,.7)';x.lineWidth=3;x.stroke();
@@ -2988,6 +2999,7 @@ ${sec('🎭',L('Кого растить','Who to raise'),L('Книжные ду�
 ${sec('📚',L('Полка','Shelf'),L('Прочитанные книги встают на полку корешками. Каждые 5 книг на ней появляется новый подарок или житель. Кнопка «✏️ Расставить» — чтобы поставить их куда хочешь.','Finished books go on the shelf as spines. Every 5 books a new gift or dweller appears. “✏️ Arrange” lets you place them where you like.'))}
 ${sec('🌙',L('Поручение недели и свидания','Weekly task and dates'),L('На главной — задание на неделю, за него дают артефакты. А в режиме героев после каждой дочитанной книги он зовет тебя на свидание.','The home screen has a weekly task that gives artifacts. In hero mode, he asks you on a date after every finished book.'))}
 ${sec('💾',L('Чтобы ничего не потерялось','Keep your progress safe'),L('Все хранится в твоем телефоне, без регистрации. Добавь сайт на экран «Домой» и иногда делай резервную копию: «Настройки» → «Сохранение и резервная копия».','Everything is stored on your phone, no sign-up. Add the site to your Home Screen and make a backup now and then: Settings → “Saving and backup”.'))}
+${sec('🔄',L('Как обновить трекер','How to update'),L('Я часто добавляю новое. Чтобы обновление подтянулось, смахни Selmoire вверх из открытых приложений и открой заново. Если не помогло, подожди минут 10 и повтори. Прогресс при этом не пропадает.','I add new things often. To get an update, swipe Selmoire away from your open apps and open it again. If nothing changed, wait 10 minutes and try again. Your progress stays.'))}
 <button class="btn primary big" style="margin-top:14px" data-a="guideOk">${L('Понятно, начинаем','Got it')}</button>`}
 function introSheet(){const p=activePet(),k=kindOf(p);
   const T=k==='boy'?[L('Тебе пришло таинственное письмо 💌','A mysterious letter has arrived 💌'),L(`Его прислал книжный герой — кто именно, узнаешь, когда треснет печать. Их ${BORDER.length}, есть редкие и даже легендарные.`,`A book hero sent it — you'll find out who when the seal breaks. There are ${BORDER.length} of them, including rare and even legendary ones.`),L(`Добавь книгу и отмечай, на какой ты странице. Через ${HATCH} страниц письмо откроется, а дальше с каждой главой он будет влюбляться в тебя всё сильнее.`,`Add a book and log which page you're on. After ${HATCH} pages the letter will open, and with every chapter he'll fall for you harder.`)]
@@ -4875,6 +4887,21 @@ function checkAway(){try{const p=activeBoy();if(!p)return;const k=lastReadKey();
   const days=Math.floor((keyToDate(today())-keyToDate(k))/864e5);if(days<3)return;
   S.awayKey=k;heroNote(p,rnd(AWAY).replace('{n}',days+' '+plural(days,DY)),'away');save();render();
   setTimeout(()=>toast(L(`💌 ${invFrom(p)} ждал тебя. Тебе письмо`,`💌 ${invFrom(p)} was waiting. You have a letter`)),1500)}catch(e){}}
+
+/* ---------- автообновление ---------- */
+const APP_VER=(document.querySelector('meta[name=app-ver]')||{}).content||'0';
+try{if(/[?&]u=/.test(location.search))history.replaceState(null,'',location.pathname+location.hash)}catch(e){}
+let updShown=false,updBusy=false;
+async function checkUpd(){if(updShown||updBusy||document.hidden||!/^https?:/.test(location.protocol))return;updBusy=true;
+  try{const r=await fetch(location.pathname+'?vc='+Date.now(),{cache:'no-store',headers:{Range:'bytes=0-4095'}});if(!r.ok&&r.status!==206)return;
+    let t='';if(r.body&&r.body.getReader){const rd=r.body.getReader(),dec=new TextDecoder();while(t.length<4096){const {done,value}=await rd.read();if(done)break;t+=dec.decode(value,{stream:true})}try{rd.cancel()}catch(e){}}else t=(await r.text()).slice(0,4096);
+    const m=/name="app-ver" content="([^"]+)"/.exec(t);if(m&&m[1]!==APP_VER)showUpd(m[1])}catch(e){}finally{updBusy=false}}
+function showUpd(v){if(updShown||$('#onb'))return;updShown=true;const d=document.createElement('button');d.id='updBar';d.type='button';
+  d.innerHTML=`<span class="ub-i">✨</span><span class="ub-t"><b>${L('Вышло обновление','Update available')}</b><small>${L('Нажми, чтобы обновить. Прогресс сохранится','Tap to update. Your progress stays')}</small></span><span class="ub-go">${L('Обновить','Update')}</span>`;
+  d.onclick=()=>{try{lsSet(LS,JSON.stringify(S));flushAll&&flushAll()}catch(e){}d.classList.add('go');setTimeout(()=>location.replace(location.pathname+'?u='+encodeURIComponent(v)+location.hash),350)};
+  document.body.appendChild(d);requestAnimationFrame(()=>d.classList.add('on'))}
+setTimeout(checkUpd,15000);setInterval(checkUpd,10*60*1000);
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')setTimeout(checkUpd,2500)});
 setTimeout(checkAway,3500);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')setTimeout(checkAway,1200)});
 const htToday=()=>{const k=weekKey();let h=11;for(const ch of k)h=(h*37+ch.charCodeAt(0))>>>0;return HTASKS[h%HTASKS.length]};
 function checkHeroTask(){const p=activeBoy();if(!p)return;wk();if(S.htDone===weekKey())return;const [c,t]=htToday().g();if(c<t)return;
