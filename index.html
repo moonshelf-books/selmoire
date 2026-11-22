@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<meta name="app-ver" content="2026-11-22-2">
+<meta name="app-ver" content="2026-11-22-3">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -2136,6 +2136,12 @@ async function drawCover(x,b,cx,cy,cw,ch,rad){x.save();x.shadowColor='rgba(0,0,0
     x.font=FN(900,Math.round(fs*.5));x.fillText((b.author||'').toUpperCase().slice(0,28),cx+cw/2,cy+ch-fs*.9);x.strokeStyle='rgba(255,255,255,.5)';x.lineWidth=Math.max(2,cw/140);rr(x,cx+cw*.04,cy+cw*.04,cw*.92,ch-cw*.08,rad*.6);x.stroke()}
   x.restore()}
 /* знак Selmoire на карточках */
+function brandTop(x,y){const ui=document.body.dataset.ui||'';x.save();x.textAlign='left';const t='SELMOIRE',sp=12;x.font='800 26px Nunito, system-ui, sans-serif';
+  let w=x.measureText('☾').width+10;for(const ch of t)w+=x.measureText(ch).width+sp;w-=sp;x.font='700 24px Nunito, system-ui, sans-serif';const h='  ·  @selmoire.books';const hw=x.measureText(h).width;
+  let cx=540-(w+hw)/2;const col=ui==='noir'?'#ff3a4a':(cssVar('--accent')||'#c79bff');
+  if(ui==='shine'){const g=x.createLinearGradient(cx,0,cx+w,0);g.addColorStop(0,'#c79bff');g.addColorStop(.45,'#ff6fd8');g.addColorStop(1,'#7fd8ff');x.fillStyle=g}else x.fillStyle=col;
+  x.font='800 26px Nunito, system-ui, sans-serif';x.fillText('☾',cx,y);cx+=x.measureText('☾').width+10;for(const ch of t){x.fillText(ch,cx,y);cx+=x.measureText(ch).width+sp}cx-=sp;
+  x.fillStyle='rgba(255,255,255,.78)';x.font='700 24px Nunito, system-ui, sans-serif';x.fillText(h,cx,y);x.restore()}
 function brandMark(x,y){const ui=document.body.dataset.ui||'',t='SELMOIRE',sp=22;x.save();x.textAlign='left';x.font='400 52px Nunito, system-ui, sans-serif';const mw=x.measureText('☾').width+18;x.font='800 44px Nunito, system-ui, sans-serif';
   let w=mw;for(const ch of t)w+=x.measureText(ch).width+sp;w-=sp;let cx=540-w/2;
   if(ui==='shine'){const g=x.createLinearGradient(cx,0,cx+w,0);g.addColorStop(0,'#c79bff');g.addColorStop(.45,'#ff6fd8');g.addColorStop(1,'#7fd8ff');x.fillStyle=g}else x.fillStyle=ui==='noir'?'#ff3a4a':(cssVar('--accent')||'#c79bff');
@@ -2156,6 +2162,7 @@ async function drawBuddy(x,p,X,Y,W,H){x.save();x.translate(X+W/2,Y+H/2);x.rotate
 async function bookCard(b){const [cv,x]=cardBase();const T=cssVar('--text'),Mu=cssVar('--muted'),Ac=cssVar('--accent');
   try{await Promise.all(['46px "Marck Script"','italic 500 40px "Cormorant Garamond"'].map(f=>document.fonts.load(f,'Яя Ёё')));}catch(e){}
   const done=b.status==='done',p=activePet(),boy=p&&kindOf(p)==='boy'&&p.hatched;
+  brandTop(x,92);const OFF=95;x.save();x.translate(0,OFF);
   x.fillStyle=T;x.font=FC(700,66);x.fillText(done?'Книга прочитана! ✨':'Сейчас читаю 📖',540,170);
   await drawCover(x,b,90,240,470,700,28);
   let dd=0;if(b.startedAt&&b.finishedAt)dd=Math.max(1,Math.round((b.finishedAt-b.startedAt)/864e5));
@@ -2175,19 +2182,39 @@ async function bookCard(b){const [cv,x]=cardBase();const T=cssVar('--text'),Mu=c
   const et=Object.entries(b.emo||{}).sort((a,c)=>c[1]-a[1]).slice(0,4).map(([i])=>EMO[i][0]).join(' ');
   if(f.length){x.fillStyle=T;x.font=FN(800,36);x.fillText(f.join('  ·  '),540,y);y+=60}
   if(et){x.font=FN(400,56);x.fillText(et,540,y+6);y+=76}
-  const q=(b.notes||[]).find(n=>n.type==='quote');const ml=Math.floor((1772-y-48)/48);
+  const q=(b.notes||[]).find(n=>n.type==='quote');const ml=Math.floor((1772-OFF-y-48)/48);
   if(q&&ml>=1){x.font='italic 600 36px Nunito, system-ui, sans-serif';const ls=wrapT(x,'«'+q.text+'»',820,Math.min(4,ml));const h=ls.length*48+44;rr(x,110,y,860,h,30);x.fillStyle=cssVar('--card2');x.fill();x.fillStyle=T;ls.forEach((l,i)=>x.fillText(l,540,y+56+i*48))}
-  brandMark(x,1830);return cv}
-async function monthCard(){const [cv,x]=cardBase();const T=cssVar('--text'),Mu=cssVar('--muted'),Ac=cssVar('--accent');
-  const now=new Date(),yy=now.getFullYear(),m=now.getMonth(),pre=`${yy}-${String(m+1).padStart(2,'0')}-`;
+  x.restore();brandMark(x,1830);return cv}
+async function coverGrid(x,books,TOP,MAXH){const N=books.length,GX=940;let cols=3,CW,CH,GAP,show=N;if(!N)return TOP;
+  for(cols=Math.min(3,Math.max(2,N));cols<=8;cols++){GAP=cols<=4?22:cols<=6?16:12;const MW=N<=2?330:N<=4?270:240;CW=(Math.min(GX,cols*MW)-(cols-1)*GAP)/cols;CH=CW*1.46;if(Math.ceil(N/cols)*CH+(Math.ceil(N/cols)-1)*GAP<=MAXH||cols===8)break}
+  {const rowsFit=Math.max(1,Math.floor((MAXH+GAP)/(CH+GAP)));if(Math.ceil(N/cols)>rowsFit)show=rowsFit*cols-1}
+  const cov=books.slice(0,show),rows=Math.ceil(cov.length/cols);let idx=0;
+  for(let r=0;r<rows;r++){const n=Math.min(cols,cov.length-r*cols),w=n*CW+(n-1)*GAP,sx=540-w/2;for(let c=0;c<n;c++){await drawCover(x,cov[idx++],sx+c*(CW+GAP),TOP+r*(CH+GAP),CW,CH,cols>5?8:14)}}
+  let gy=TOP+rows*CH+(rows-1)*GAP;if(N>show){x.fillStyle='#d9ccff';x.font='700 28px Manrope, Nunito, sans-serif';x.fillText(`и еще ${N-show} ${plural(N-show,['книга','книги','книг'])}`,540,gy+44);gy+=50}return gy}
+async function monthCard(){const now=new Date(),yy=now.getFullYear(),m=now.getMonth(),pre=`${yy}-${String(m+1).padStart(2,'0')}-`;
   const pages=Object.keys(S.log).filter(k=>k.startsWith(pre)).reduce((a,k)=>a+S.log[k],0),days=Object.keys(S.log).filter(k=>k.startsWith(pre)&&S.log[k]>0).length;
-  const done=doneBooks().filter(b=>b.finishedAt&&new Date(b.finishedAt).getFullYear()===yy&&new Date(b.finishedAt).getMonth()===m);
-  x.fillStyle=T;x.font=FC(700,70);x.fillText(L(`Мои книги в ${MONTHS_P[m]}`,`My books in ${MONTHS_EN[m]}`),540,180);
-  await drawPet(x,290,210,500);const p=activePet();x.fillStyle=T;x.font=FC(700,46);x.fillText(p.hatched?`${p.name||'Дух'} · ${stageName(p,stageOf(p))}`:eggTitle(p),540,770);
-  const tiles=[[pages,plural(pages,PG)],[done.length,plural(done.length,['книга','книги','книг'])+' прочитано'],[days,plural(days,DY)+' с книгой'],[bestStreak(),'лучшая серия 🔥']];
-  tiles.forEach(([v,l],i)=>{const tx=80+(i%2)*470,ty=840+Math.floor(i/2)*250;rr(x,tx,ty,450,220,36);x.fillStyle=cssVar('--card2');x.fill();x.fillStyle=Ac;x.font=FC(700,96);x.fillText(String(v),tx+225,ty+120);x.fillStyle=T;x.font=FN(800,32);x.fillText(l,tx+225,ty+180)});
-  if(done.length){x.fillStyle=Mu;x.font=FN(800,34);x.fillText('Прочитано:',540,1420);const show=done.slice(0,5),cw=160,gap=24,tw=show.length*cw+(show.length-1)*gap;let cx=540-tw/2;for(const b of show){await drawCover(x,b,cx,1460,cw,232,16);cx+=cw+gap}}
-  else{x.fillStyle=Mu;x.font=FN(700,38);x.fillText('Впереди ещё много историй ✨',540,1500)}
+  const done=doneBooks().filter(b=>b.finishedAt&&new Date(b.finishedAt).getFullYear()===yy&&new Date(b.finishedAt).getMonth()===m).sort((a,b)=>b.finishedAt-a.finishedAt);
+  try{await Promise.all(['600 120px "Cormorant Garamond"','italic 500 40px "Cormorant Garamond"','800 30px Manrope','46px "Marck Script"'].map(f=>document.fonts.load(f,'Яя ноябрь')));}catch(e){}
+  const cv=document.createElement('canvas');cv.width=1080;cv.height=1920;const x=cv.getContext('2d');x.fillStyle='#07050c';x.fillRect(0,0,1080,1920);
+  try{const I=await loadImg(SKY_IMG);const k=Math.max(1080/I.width,1920/I.height);x.drawImage(I,(1080-I.width*k)/2,0,I.width*k,I.height*k)}catch(e){}
+  let g=x.createLinearGradient(0,0,0,1920);g.addColorStop(0,'rgba(5,4,10,.15)');g.addColorStop(.35,'rgba(5,4,10,.45)');g.addColorStop(1,'rgba(5,4,10,.85)');x.fillStyle=g;x.fillRect(0,0,1080,1920);
+  brandTop(x,86);x.textAlign='center';
+  const MN=L(['январь','февраль','март','апрель','май','июнь','июль','август','сентябрь','октябрь','ноябрь','декабрь'][m],MONTHS_EN[m]);
+  x.fillStyle='#d9ccff';x.font='800 30px Manrope, Nunito, sans-serif';x.fillText('М О Й',540,190);
+  x.fillStyle='#fff';x.font='600 170px "Cormorant Garamond", Georgia, serif';x.shadowColor='rgba(180,150,255,.6)';x.shadowBlur=40;x.fillText(MN,540,340);x.shadowBlur=0;
+  x.fillStyle='#e6dcff';x.font='italic 500 50px "Cormorant Garamond", Georgia, serif';x.fillText('в книгах',540,405);
+  const st=bestStreak();const tiles=[[done.length,plural(done.length,['книга','книги','книг'])],[pages,plural(pages,PG)],[days,plural(days,DY)+' с книгой'],[st,'лучшая серия']];
+  tiles.forEach(([v,l],i)=>{const tw=212,tx=70+i*(tw+20),ty=460;rr(x,tx,ty,tw,160,28);x.fillStyle='rgba(20,14,34,.6)';x.fill();x.strokeStyle='rgba(215,200,255,.3)';x.lineWidth=2;x.stroke();
+    x.fillStyle='#fff';x.font='600 70px "Cormorant Garamond", Georgia, serif';x.fillText(String(v),tx+tw/2,ty+86);x.fillStyle='#cfc4ee';x.font='700 23px Manrope, Nunito, sans-serif';x.fillText(l,tx+tw/2,ty+128)});
+  let ly;
+  if(done.length){ly=await coverGrid(x,done,680,820)+80}
+  else{x.fillStyle='#e6dcff';x.font='italic 500 52px "Cormorant Garamond", Georgia, serif';x.fillText('Впереди еще много историй',540,800);ly=900}
+  const p=activePet();if(p&&p.hatched&&ly<1700){const boy=kindOf(p)==='boy';const R=58,cx=540-150,cy=ly+20;
+    x.save();x.beginPath();x.arc(cx,cy,R,0,7);x.closePath();x.shadowColor='rgba(170,120,255,.8)';x.shadowBlur=30;x.fillStyle='#120c1e';x.fill();x.restore();
+    x.save();x.beginPath();x.arc(cx,cy,R,0,7);x.clip();try{let I;if(boy&&typeof HERO_FULL!=='undefined'&&HERO_FULL[p.species]){const F=HERO_FULL[p.species];I=await loadImg(stageOf(p)===0&&F[1]?F[1]:F[0]);const k=Math.max(2*R/I.width,2*R/I.height);x.drawImage(I,cx-I.width*k/2,cy-R*.95,I.width*k,I.height*k)}else{I=await loadImg(svgUrl(creatureSVG(p.species,stageOf(p),'happy',{outfit:p.outfit})));x.drawImage(I,cx-R,cy-R,2*R,2*R)}}catch(e){}x.restore();
+    x.beginPath();x.arc(cx,cy,R,0,7);x.strokeStyle='rgba(225,210,255,.7)';x.lineWidth=3;x.stroke();
+    x.textAlign='left';x.fillStyle='#fff';x.font='44px "Marck Script", "Cormorant Garamond", serif';x.fillText(boy?'читал со мной':'читали вместе',cx+R+26,cy-4);
+    x.fillStyle='#cfc4ee';x.font='700 28px Manrope, Nunito, sans-serif';x.fillText(boy?invFrom(p):(p.name||''),cx+R+26,cy+38);x.textAlign='center'}
   brandMark(x,1830);return cv}
 async function showCard(kind,id){openSheet('<h3 class="center">Рисую карточку…</h3><div class="center" style="font-size:44px;margin:20px 0">🎨</div>','card');
   try{const cv=kind==='book'?await bookCard(S.books[id]):await monthCard();let url;try{url=cv.toDataURL('image/png')}catch(e){const st={};Object.keys(covers).forEach(k=>{if(/^https?:/.test(covers[k])){st[k]=covers[k];delete covers[k]}});const cv2=kind==='book'?await bookCard(S.books[id]):await monthCard();Object.assign(covers,st);url=cv2.toDataURL('image/png')}lastCard={url,name:kind==='book'?'kniga.png':'itogi-mesyaca.png'};
@@ -2232,14 +2259,14 @@ async function yearCard(){const D=yearData(),{y,pages,days,books,fa,fe}=D;
   const cv=document.createElement('canvas');cv.width=1080;cv.height=1920;const x=cv.getContext('2d');x.fillStyle='#07050c';x.fillRect(0,0,1080,1920);
   try{const I=await loadImg(SKY_IMG);const k=Math.max(1080/I.width,1920/I.height);x.drawImage(I,(1080-I.width*k)/2,0,I.width*k,I.height*k)}catch(e){}
   let g=x.createLinearGradient(0,0,0,1920);g.addColorStop(0,'rgba(5,4,10,.15)');g.addColorStop(.35,'rgba(5,4,10,.45)');g.addColorStop(1,'rgba(5,4,10,.85)');x.fillStyle=g;x.fillRect(0,0,1080,1920);
-  x.textAlign='center';x.fillStyle='#d9ccff';x.font='800 30px Manrope, Nunito, sans-serif';x.fillText('М О Й',540,150);
+  brandTop(x,80);  x.textAlign='center';x.fillStyle='#d9ccff';x.font='800 30px Manrope, Nunito, sans-serif';x.fillText('М О Й',540,150);
   x.fillStyle='#fff';x.font='600 200px "Cormorant Garamond", Georgia, serif';x.shadowColor='rgba(180,150,255,.6)';x.shadowBlur=40;x.fillText(String(y),540,330);x.shadowBlur=0;
   x.fillStyle='#e6dcff';x.font='italic 500 50px "Cormorant Garamond", Georgia, serif';x.fillText('в книгах',540,395);
   const tiles=[[books.length,plural(books.length,['книга','книги','книг'])],[pages,plural(pages,PG)],[days,plural(days,DY)+' с книгой']];
   tiles.forEach(([v,l],i)=>{const tx=80+i*320,ty=450;rr(x,tx,ty,280,170,30);x.fillStyle='rgba(20,14,34,.6)';x.fill();x.strokeStyle='rgba(215,200,255,.3)';x.lineWidth=2;x.stroke();
     x.fillStyle='#fff';x.font='600 76px "Cormorant Garamond", Georgia, serif';x.fillText(String(v),tx+140,ty+92);x.fillStyle='#cfc4ee';x.font='700 26px Manrope, Nunito, sans-serif';x.fillText(l,tx+140,ty+138)});
   const N=books.length,GX=940,TOP=660,MAXH=N>12?890:760;let cols=3,CW,CH,GAP,show=N;
-  for(cols=3;cols<=8;cols++){GAP=cols<=4?22:cols<=6?16:12;CW=(Math.min(GX,cols*240)-(cols-1)*GAP)/cols;CH=CW*1.46;if(Math.ceil(N/cols)*CH+(Math.ceil(N/cols)-1)*GAP<=MAXH||cols===8)break}
+  for(cols=3;cols<=8;cols++){GAP=cols<=4?22:cols<=6?16:12;const MW=N<=2?330:N<=4?270:240;CW=(Math.min(GX,cols*MW)-(cols-1)*GAP)/cols;CH=CW*1.46;if(Math.ceil(N/cols)*CH+(Math.ceil(N/cols)-1)*GAP<=MAXH||cols===8)break}
   {const rowsFit=Math.max(1,Math.floor((MAXH+GAP)/(CH+GAP)));if(Math.ceil(N/cols)>rowsFit)show=rowsFit*cols-1}
   const cov=books.slice(0,show);let gy=TOP;
   if(cov.length){const rows=Math.ceil(cov.length/cols);let idx=0;
