@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<meta name="app-ver" content="2026-11-23-7">
+<meta name="app-ver" content="2026-11-23-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -2526,6 +2526,7 @@ function a2hsStartSheet(){const has=Object.keys(S.books).length>0;
 <button class="btn ghost big" style="width:100%;margin-top:8px" data-a="a2hsLater">${L('Пока продолжить в браузере','Continue in the browser for now')}</button>`}
 function startFlow(){if(MIG_OLD&&!MIG_TEST&&!IS_STANDALONE&&!Object.keys(S.books||{}).length){location.replace('https://selmoire.ru/');return}
   if(migShould()){migOpen();return}
+  if(FROM_MOON&&IS_MOB&&!IS_STANDALONE){onbOpen();return}
   if(!S.seenIntro){onbOpen();return}if(IS_MOB&&!IS_STANDALONE&&!S.a2hsPop)openSheet(a2hsStartSheet(),'intro')}
 function a2hsSheet(){const st=(n,t)=>`<div style="display:flex;gap:10px;margin:0 0 10px"><b style="min-width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-size:12px">${n}</b><span style="flex:1;line-height:1.4">${t}</span></div>`;
   const steps=IS_IOS?[L('Открой сайт именно в <b>Safari</b>. Если открыла из Телеграма или Инстаграма — нажми «•••» и выбери «Открыть в Safari»','Open the site in <b>Safari</b>. If you came from Telegram or Instagram, tap “•••” and choose “Open in Safari”'),L('Нажми кнопку «Поделиться» — квадрат со стрелкой вверх. Если её не видно, сначала нажми «•••» внизу','Tap the Share button — a square with an up arrow. If you can’t see it, tap “•••” at the bottom first'),L('Пролистай вниз и выбери <b>«На экран „Домой“»</b>, потом «Добавить»','Scroll down, choose <b>“Add to Home Screen”</b>, then “Add”'),L('Теперь открывай Selmoire только через иконку 🌙','From now on, open Selmoire only from the icon 🌙')]
@@ -2998,7 +2999,7 @@ function onbOpen(){if($('#onb'))return;const d=document.createElement('div');d.i
 <div class="ostage" id="onbIntro"><div class="oword" translate="no"><span class="om" style="animation-delay:.3s">☾</span>${'SELMOIRE'.split('').map((c,i)=>`<span style="animation-delay:${(.45+i*.11).toFixed(2)}s">${c}</span>`).join('')}</div>
 <div class="otag">${L('твоя книжная одержимость','your bookish obsession')}</div><button class="obtn" data-a="onbEnter">${L('Войти','Enter')}</button>${IS_STANDALONE?`<button class="omove" data-a="onbRestore">${L('Переезжаю со старого трекера','Moving from the old tracker')}</button>`:''}</div>`;
   document.body.appendChild(d);
-  if(FROM_MOON&&IS_MOB&&!IS_STANDALONE&&!S.a2hsPop){const st=$('#onbIntro');if(st)st.style.display='none';onbActions.onbEnter();const w=$('#onbA2');if(w)w.innerHTML=onbA2HTML(true)}}
+  if(FROM_MOON&&IS_MOB&&!IS_STANDALONE){const st=$('#onbIntro');if(st)st.style.display='none';onbActions.onbEnter();const w=$('#onbA2');if(w)w.innerHTML=onbA2HTML(true)}}
 function onbDeck(){const env=onbEnvImg(),hero=(typeof HERO_FULL!=='undefined'&&HERO_FULL.h_vamp)?(HERO_FULL.h_vamp[1]||HERO_FULL.h_vamp[0]):'';
   const envHTML=env?`<img src="${env}" alt="">`:`<svg viewBox="0 0 300 200"><rect x="6" y="20" width="288" height="170" rx="14" fill="#1b1528" stroke="#5a4a86"/><path d="M6 34 L150 120 L294 34" fill="none" stroke="#5a4a86" stroke-width="2"/><circle cx="157" cy="100" r="30" fill="#4a1e5a"/><text x="157" y="110" font-size="30" text-anchor="middle" fill="#d9c8ff">☾</text></svg>`;
   return `<div class="odeck" id="onbDeck">
@@ -3035,11 +3036,11 @@ ${how?`<div class="oa2steps">${steps.map((t,i)=>`<div class="oa2st"><b>${i+1}</b
 <button class="olater" style="margin-top:14px" data-a="onbA2Skip">${L('Пока продолжить в браузере','Continue in the browser for now')}</button></div>`}
 const onbActions={
   onbEnter:()=>{const o=$('#onb'),st=$('#onbIntro');if(!o||!st)return;st.classList.add('gone');o.classList.add('deck');
-    if(IS_MOB&&!IS_STANDALONE&&!S.a2hsPop){const w=document.createElement('div');w.className='ostage gone';w.id='onbA2';w.innerHTML=onbA2HTML(false);o.appendChild(w);
+    if(IS_MOB&&!IS_STANDALONE&&(!S.a2hsPop||FROM_MOON)){const w=document.createElement('div');w.className='ostage gone';w.id='onbA2';w.innerHTML=onbA2HTML(false);o.appendChild(w);
       requestAnimationFrame(()=>requestAnimationFrame(()=>w.classList.remove('gone')));setTimeout(()=>st.remove(),650);return}
     onbToDeck(st)},
   onbA2How:()=>{const w=$('#onbA2');if(w)w.innerHTML=onbA2HTML(true)},
-  onbA2Skip:()=>{S.a2hsPop=1;save();const w=$('#onbA2');if(!w)return;w.classList.add('gone');setTimeout(()=>{w.remove()},650);onbToDeck(null)},
+  onbA2Skip:()=>{S.a2hsPop=1;save();if(S.seenIntro){onbClose();render();return}const w=$('#onbA2');if(!w)return;w.classList.add('gone');setTimeout(()=>{w.remove()},650);onbToDeck(null)},
   onbSeal:()=>{const v=$('#onbEnv');if(!v)return;if(v.classList.contains('open')){onbActions.onbPick({v:'boys'});return}
     v.classList.add('open');try{navigator.vibrate&&navigator.vibrate(25)}catch(_){}
     const t=$('#onbT1'),x=$('#onbX1'),b=$('#onbB1');if(t)t.textContent=L('Он в маске','He wears a mask');if(x)x.textContent=L('Читай, и он снимет ее. Пишет письма, ревнует к книжным героям и зовет на свидания.','Read and he will take it off. He writes letters, gets jealous of book heroes and asks you out.');
