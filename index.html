@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<meta name="app-ver" content="2026-11-23-8">
+<meta name="app-ver" content="2026-11-24-1">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -5009,27 +5009,48 @@ function heroTaskCard(){const p=activePet();if(!p||kindOf(p)!=='boy'||!p.hatched
 /* карточка для сторис */
 function rrect(x,X,Y,W,H,R){x.beginPath();x.moveTo(X+R,Y);x.arcTo(X+W,Y,X+W,Y+H,R);x.arcTo(X+W,Y+H,X,Y+H,R);x.arcTo(X,Y+H,X,Y,R);x.arcTo(X,Y,X+W,Y,R);x.closePath()}
 async function letterStory(id){const l=(S.letters||[]).find(x=>x.id===id);if(!l)return;const p=S.pets.find(x=>x.id===l.pid);
-  try{await Promise.all(['64px "Marck Script"','600 60px "Cormorant Garamond"','italic 500 40px "Cormorant Garamond"','700 30px Manrope'].map(f=>document.fonts.load(f,'Яя Ёё Selmoire 0123')));await new Promise(r=>setTimeout(r,200));if(!document.fonts.check('64px "Marck Script"','Яя')){await document.fonts.load('64px "Marck Script"','Яя');await new Promise(r=>setTimeout(r,400))}}catch(e){}
-  const cv=document.createElement('canvas');cv.width=1080;cv.height=1920;const x=cv.getContext('2d');
-  let g=x.createLinearGradient(0,0,0,1920);g.addColorStop(0,'#0e0b16');g.addColorStop(1,'#040306');x.fillStyle=g;x.fillRect(0,0,1080,1920);
-  g=x.createRadialGradient(540,360,40,540,360,900);g.addColorStop(0,'rgba(120,90,210,.35)');g.addColorStop(1,'rgba(0,0,0,0)');x.fillStyle=g;x.fillRect(0,0,1080,1920);
+  try{await Promise.all(['64px "Marck Script"','italic 500 40px "Cormorant Garamond"','700 30px Manrope','800 26px Nunito'].map(f=>document.fonts.load(f,'Яя Ёё Selmoire 0123')));await new Promise(r=>setTimeout(r,200));if(!document.fonts.check('64px "Marck Script"','Яя')){await document.fonts.load('64px "Marck Script"','Яя');await new Promise(r=>setTimeout(r,400))}}catch(e){}
+  const W=1080,H=1920,cv=document.createElement('canvas');cv.width=W;cv.height=H;const x=cv.getContext('2d');
+  x.fillStyle='#07050b';x.fillRect(0,0,W,H);
+  /* фон: его портрет */
+  let src='';try{const F=p&&p.hatched&&typeof HERO_FULL!=='undefined'&&HERO_FULL[p.species];if(F)src=stageOf(p)===0&&F[1]?F[1]:F[0]}catch(e){}
+  try{const im=await loadImg(src||SKY_IMG);const k=Math.max(W/im.width,(src?1500:H)/im.height);x.drawImage(im,(W-im.width*k)/2,0,im.width*k,im.height*k)}catch(e){}
+  let g=x.createLinearGradient(0,0,0,H);g.addColorStop(0,'rgba(7,5,11,.55)');g.addColorStop(.12,'rgba(7,5,11,0)');g.addColorStop(.42,'rgba(7,5,11,.1)');g.addColorStop(.62,'rgba(7,5,11,.82)');g.addColorStop(.78,'rgba(7,5,11,.97)');g.addColorStop(1,'#07050b');x.fillStyle=g;x.fillRect(0,0,W,H);
   let sd=(l.at%9973)+3;const R=()=>(sd=(sd*16807)%2147483647)/2147483647;
-  for(let i=0;i<140;i++){x.fillStyle=`rgba(230,225,255,${.15+R()*.5})`;const r=R()*2.4+.4;x.beginPath();x.arc(R()*1080,R()*1920,r,0,7);x.fill()}
-  x.textAlign='center';x.fillStyle='#efeaff';x.font='600 64px "Cormorant Garamond",Georgia,serif';x.fillText('☾ Selmoire',540,190);
-  x.font='700 24px Manrope,sans-serif';x.fillStyle='rgba(207,200,238,.8)';x.fillText(L('КНИЖНЫЙ ТРЕКЕР','BOOK TRACKER').split('').join(String.fromCharCode(8202)),540,240);
-  const dk=dayKey(new Date(l.at)),pg=S.log[dk]||0;
-  if(pg>0){x.fillStyle='#fff';x.font='600 230px "Cormorant Garamond",Georgia,serif';x.fillText(String(pg),540,560);
-    x.font='italic 500 46px "Cormorant Garamond",Georgia,serif';x.fillStyle='#d9d2f0';x.fillText(L(plural(pg,PG)+' сегодня',(pg===1?'page':'pages')+' today'),540,630)}
-  else{x.font='italic 500 52px "Cormorant Garamond",Georgia,serif';x.fillStyle='#d9d2f0';x.fillText(fmtDate(l.at),540,560)}
-  const ln=letterLines(l),text=ln[1];x.font='64px "Marck Script","Cormorant Garamond",serif';const lines=wrapT(x,text,780,7);
-  const lh=86,ph=lines.length*lh+250,py=Math.max(760,1170-ph/2);
-  x.save();x.shadowColor='rgba(0,0,0,.6)';x.shadowBlur=60;x.shadowOffsetY=20;rrect(x,90,py,900,ph,40);g=x.createLinearGradient(90,py,990,py+ph);g.addColorStop(0,'#1c1826');g.addColorStop(1,'#0d0b12');x.fillStyle=g;x.fill();x.restore();
-  rrect(x,90,py,900,ph,40);x.strokeStyle='rgba(215,205,255,.22)';x.lineWidth=2;x.stroke();
-  x.fillStyle=invSeal(p);x.beginPath();x.arc(150,py+8,54,0,7);x.fill();x.fillStyle='rgba(255,255,255,.4)';x.beginPath();x.arc(158,py+8,26,0,7);x.fill();x.fillStyle=invSeal(p);x.beginPath();x.arc(170,py,24,0,7);x.fill();
-  x.textAlign='left';x.fillStyle='#f3eefc';x.font='64px "Marck Script","Cormorant Garamond",serif';lines.forEach((s,i)=>x.fillText(s,150,py+140+i*lh));
-  x.textAlign='right';x.fillStyle='#c5b8ff';x.font='54px "Marck Script","Cormorant Garamond",serif';x.fillText('— '+invFrom(p),930,py+ph-60);
-  x.textAlign='center';x.fillStyle='#e6e0f5';x.font='italic 500 46px "Cormorant Garamond",Georgia,serif';x.fillText(L('твоя книжная одержимость','your bookish obsession'),540,1700);
-  brandMark(x,1810);
+  for(let i=0;i<70;i++){x.fillStyle=`rgba(235,228,255,${.12+R()*.4})`;const r=R()*2.2+.4;x.beginPath();x.arc(R()*W,1150+R()*770,r,0,7);x.fill()}
+  brandTop(x,92);
+  /* текст письма: свой перенос с узкими пробелами (у Marck Script слишком широкий пробел) */
+  const words=String(tr(letterLines(l)[1])).split(/\s+/).filter(Boolean),MW=760,dk=dayKey(new Date(l.at)),pg=(S.log&&S.log[dk])||0;
+  let FS=58,LH,font,sp,lines,ch;
+  for(;;FS-=3){LH=Math.round(FS*1.38);font=FS+'px "Marck Script","Cormorant Garamond",serif';x.font=font;sp=FS*.26;lines=[];let cur=[],cw=0;
+    for(const w of words){const ww=x.measureText(w).width;if(cur.length&&cw+sp+ww>MW){lines.push(cur);cur=[w];cw=ww}else{cw+=(cur.length?sp:0)+ww;cur.push(w)}}if(cur.length)lines.push(cur);
+    ch=110+lines.length*LH+120+(pg>0?54:0);if(ch<=1630-760||FS<=40)break}
+  if(1630-ch<760){const mx=Math.max(1,Math.floor((1630-760-230-(pg>0?54:0))/LH));if(lines.length>mx){lines.length=mx;const last=lines[mx-1];last[last.length-1]=last[last.length-1].replace(/[.,!?…]*$/,'…')}ch=110+lines.length*LH+120+(pg>0?54:0)}
+  const cx0=110,cw0=W-220,cy=1630-ch;
+  /* пергамент */
+  x.save();x.shadowColor='rgba(0,0,0,.75)';x.shadowBlur=70;x.shadowOffsetY=24;rr(x,cx0,cy,cw0,ch,34);
+  g=x.createLinearGradient(cx0,cy,cx0+cw0,cy+ch);g.addColorStop(0,'rgba(38,28,44,.94)');g.addColorStop(1,'rgba(16,11,20,.96)');x.fillStyle=g;x.fill();x.restore();
+  rr(x,cx0,cy,cw0,ch,34);x.strokeStyle='rgba(236,206,160,.42)';x.lineWidth=2.5;x.stroke();
+  rr(x,cx0+16,cy+16,cw0-32,ch-32,24);x.strokeStyle='rgba(236,206,160,.16)';x.lineWidth=1.5;x.stroke();
+  /* заголовок */
+  x.textAlign='center';x.fillStyle='rgba(236,214,176,.85)';x.font='800 22px Manrope,Nunito,sans-serif';
+  x.fillText((L('ПИСЬМО','LETTER')+'  ·  '+fmtDate(l.at).toUpperCase()).split('').join(String.fromCharCode(8202)),W/2,cy+82);
+  /* текст */
+  x.textAlign='left';x.fillStyle='#f5efe6';x.font=font;x.shadowColor='rgba(0,0,0,.5)';x.shadowBlur=6;
+  lines.forEach((ws,i)=>{let tx=cx0+80;const ty=cy+110+FS+i*LH;ws.forEach(w=>{x.fillText(w,tx,ty);tx+=x.measureText(w).width+sp})});x.shadowBlur=0;
+  /* подпись */
+  const sy=cy+110+lines.length*LH+62;x.textAlign='right';x.fillStyle=cssVar('--accent')||'#d9c3ff';x.font='56px "Marck Script","Cormorant Garamond",serif';x.fillText('— '+invFrom(p),cx0+cw0-80,sy);
+  if(pg>0){x.textAlign='right';x.fillStyle='rgba(236,214,176,.7)';x.font='600 24px Manrope,Nunito,sans-serif';x.fillText(L(`в этот день: ${pg} ${plural(pg,PG)}`,`that day: ${pg} ${pg===1?'page':'pages'}`),cx0+cw0-80,sy+52)}
+  /* сургучная печать */
+  const col=invSeal(p),S2=1.75,sx=W/2-30*S2,syy=cy-30*S2+2;x.save();x.translate(sx,syy);x.scale(S2,S2);
+  const blob=new Path2D('M30 4C38 3 42 9 48 10C55 12 56 20 55 27C57 34 54 41 49 46C44 52 37 56 30 55C22 57 15 53 11 47C5 42 3 34 5 27C3 19 8 12 14 9C19 5 24 5 30 4Z');
+  x.shadowColor='rgba(0,0,0,.6)';x.shadowBlur=14;x.shadowOffsetY=5;x.fillStyle=col;x.fill(blob);x.shadowColor='transparent';
+  g=x.createRadialGradient(22,20,2,30,30,30);g.addColorStop(0,'rgba(255,255,255,.32)');g.addColorStop(.45,'rgba(255,255,255,0)');g.addColorStop(1,'rgba(0,0,0,.38)');x.fillStyle=g;x.fill(blob);
+  x.beginPath();x.arc(30,30,17,0,7);x.strokeStyle='rgba(0,0,0,.3)';x.lineWidth=2;x.stroke();x.beginPath();x.arc(30,30,15.5,Math.PI*1.1,Math.PI*1.7);x.strokeStyle='rgba(255,255,255,.22)';x.lineWidth=1.2;x.stroke();
+  x.fillStyle='rgba(0,0,0,.28)';x.font='400 20px Nunito,sans-serif';x.textAlign='center';x.fillText('☾',30.8,37.8);x.fillStyle='rgba(255,255,255,.4)';x.fillText('☾',30,37);x.restore();
+  /* низ */
+  x.textAlign='center';x.fillStyle='#e6e0f5';x.font='italic 500 44px "Cormorant Garamond",Georgia,serif';x.fillText(L('твоя книжная одержимость','your bookish obsession'),W/2,1718);
+  brandMark(x,1812);
   shareCanvas(cv,'selmoire-pismo.png')}
 const featActions2={letterStory:d=>letterStory(d.id),
   giftStyle:d=>{S.giftStyle=d.v;save();render();if(d.f==='style')openSheet(shStyleSheet(),'shstyle');else if(d.f!=='edit')openSheet(shelfPetsSheet(),'shpets')},
