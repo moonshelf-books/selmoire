@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<meta name="app-ver" content="2026-11-23-3">
+<meta name="app-ver" content="2026-11-23-4">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -3001,7 +3001,7 @@ function onbDeck(){const env=onbEnvImg(),hero=(typeof HERO_FULL!=='undefined'&&H
 <div class="ottl">${L('Зачарованное яйцо','An enchanted egg')}</div><div class="otx">${L('Внутри спит зверь из фэнтези. Читай, и он вырастет из детеныша во взрослого хранителя.','A fantasy beast sleeps inside. Read, and it will grow from a cub into a grown guardian.')}</div>
 <button class="octa" data-a="onbPick" data-v="fam">${L('Взять яйцо','Take the egg')} 🔮</button></div></div>
 <div class="odots" id="onbDots"><i class="on"></i><i></i><i></i></div>
-<div class="obot">${IS_STANDALONE?`<button class="chip" data-a="backup">${L('📥 Уже читала в браузере? Перенеси прогресс','📥 Used it in the browser before? Bring your progress')}</button>`:''}<button class="olater" data-a="onbLater">${L('Выберу позже','Choose later')}</button></div>`}
+<div class="obot">${IS_STANDALONE?`<button class="chip" data-a="onbRestore">${L('📥 Переезжаешь со старого трекера? Перенеси прогресс','📥 Moving from the old tracker? Bring your progress')}</button>`:''}<button class="olater" data-a="onbLater">${L('Выберу позже','Choose later')}</button></div>`}
 function onbType(el,t){clearInterval(onbLineT);let i=0;el.textContent='';onbLineT=setInterval(()=>{el.textContent=t.slice(0,++i);if(i>=t.length)clearInterval(onbLineT)},42)}
 function onbClose(){const o=$('#onb');if(!o)return;o.style.transition='opacity .45s';o.style.opacity='0';setTimeout(()=>o.remove(),460)}
 function onbToDeck(old){const o=$('#onb');if(!o)return;const w=document.createElement('div');w.className='ostage gone';w.style.justifyContent='stretch';w.innerHTML=onbDeck();o.appendChild(w);
@@ -3030,7 +3030,8 @@ const onbActions={
     if(b)b.innerHTML=L('Читать с ним','Read with him')+' 🖤';
     setTimeout(()=>{const l=$('#onbLine');if(l)onbType(l,L('«Я ждал, когда ты откроешь…»','“I was waiting for you to open it…”'))},700)},
   onbPick:d=>{S.onbAsk=1;onbClose();setTimeout(()=>A.choose({v:d.v}),120)},
-  onbLater:()=>{onbClose();A.chooseLater()}};
+  onbLater:()=>{onbClose();A.chooseLater()},
+  onbRestore:()=>{onbClose();setTimeout(()=>openSheet(`<div class="hint" style="margin:0 0 10px;padding:10px 12px;border-radius:14px;background:var(--card2)">${L('Нажми «📂 Выбрать файл копии» ниже и выбери файл, который ты сохранила в старом трекере. Обычно он называется selmoire-kopiya и лежит в «Файлах».','Tap “📂 Choose backup file” below and pick the file you saved in the old tracker.')}</div>`+backupSheet(),'backup'),350)}};
 function onbAskHTML(){const p=activePet();if(!p)return '';const k=kindOf(p);
   const av=k==='boy'?`<img src="${onbEnvImg()||''}" alt="">`:eggSVG(p.species,0);
   const t=k==='boy'?[L('Что ты сейчас читаешь?','What are you reading now?'),L('Он хочет знать, к кому ему ревновать','He wants to know who to be jealous of')]:k==='fam'?[L('Что ты сейчас читаешь?','What are you reading now?'),L('Яйцо согреется от первых страниц','The egg warms with your first pages')]:[L('Что ты сейчас читаешь?','What are you reading now?'),L('От жанра зависит, кто проснется','The genre decides who wakes up')];
@@ -5258,7 +5259,9 @@ const impActions={importBooks:()=>{window._impSwap=false;openSheet(impSheet(),'i
 document.addEventListener('input',e=>{if(e.target&&e.target.id==='impTxt')impPrevUpd()});
 document.addEventListener('change',e=>{if(e.target&&e.target.id==='impSt'){S.impSt=e.target.value;save()}});
 document.addEventListener('change',async e=>{if(!e.target||e.target.id!=='impFile')return;const f=e.target.files&&e.target.files[0];if(!f)return;
-  try{const r=await impFileAny(f);booksTab='done';impDone(r)}
+  try{if(f.size>20&&f.size<60e6){const h=new Uint8Array(await f.slice(0,1).arrayBuffer());if(h[0]===0x7b){const txt=await f.text();let ok=false;try{const j=JSON.parse(txt);ok=j&&Array.isArray(j.pets)&&j.pets.length&&typeof j.books==='object'}catch(_){}
+    if(ok){closeSheet(true);toast(L('Это резервная копия Selmoire, восстанавливаю…','This is a Selmoire backup, restoring…'));setTimeout(()=>applyRestore(txt),300);return}}}
+    const r=await impFileAny(f);booksTab='done';impDone(r)}
   catch(err){const el=$('#impMsg');if(el)el.textContent='⚠️ '+(err&&err.message&&!/Failed to fetch|load/i.test(err.message)?err.message:L('Не получилось загрузить нужные файлы — проверь интернет и попробуй еще раз','Could not load the needed files — check your connection and try again'))}});
 
 const guideActions={feedback:()=>openSheet(feedbackSheet(),'feedback'),
