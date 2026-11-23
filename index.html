@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<meta name="app-ver" content="2026-11-23-4">
+<meta name="app-ver" content="2026-11-23-6">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -1119,6 +1119,7 @@ body[data-ui] .srow .ico,body[data-ui] .slist .ico{width:24px;height:24px}
 .onb-react{text-align:center}.onb-react .oa-av{width:150px;height:150px;margin:6px auto 10px;border-radius:22px;overflow:hidden;box-shadow:0 0 40px rgba(170,120,255,.45)}
 .onb-react .oa-av img,.onb-react .oa-av svg{width:100%;height:100%;object-fit:cover}
 .onb-react q{display:block;font:28px/1.25 'Marck Script',cursive;margin:8px 0 6px;quotes:none}
+body.onbsh .ov{z-index:9500!important;background:rgba(5,4,10,.45)}
 #onb .oa2{display:flex;flex-direction:column;align-items:center;text-align:center;padding:0 28px;max-width:420px}
 #onb .oa2ico{margin-bottom:10px;animation:opulse 3s ease-in-out infinite}
 #onb .oa2steps{margin-top:18px;text-align:left;display:flex;flex-direction:column;gap:10px;width:100%}
@@ -2486,7 +2487,7 @@ function render(){
 function toast(t){const el=$('#toast');el.textContent=t;el.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove('on'),2600)}
 const queue=[];
 function openSheet(html,kind){sheetKind=kind||'sheet';$('#sheet').innerHTML='<div class="grab"></div>'+(sheetKind==='intro'?'':'<div class="shxw"><button class="shx" data-a="sheetX" aria-label="close">✕</button></div>')+html;$('#sheet').style.transform='';$('#ov').classList.remove('hidden');$('#sheet').scrollTop=0;if($('#fXp'))updFormHint();if($('#lgBox'))updDelta()}
-function closeSheet(silent){$('#ov').classList.add('hidden');$('#sheet').innerHTML='';const k=sheetKind;sheetKind=null;pendingCover=undefined;if(k==='a2hs'&&!S.seenIntro){setTimeout(()=>{if(!sheetKind)onbOpen()},250);return k}if(!silent)setTimeout(nextCeleb,260);return k}
+function closeSheet(silent){document.body.classList.remove('onbsh');$('#ov').classList.add('hidden');$('#sheet').innerHTML='';const k=sheetKind;sheetKind=null;pendingCover=undefined;if(k==='a2hs'&&!S.seenIntro){setTimeout(()=>{if(!sheetKind)onbOpen()},250);return k}if(!silent)setTimeout(nextCeleb,260);return k}
 function celebrate(html){queue.push(html);if(!sheetKind&&$('#hatch').classList.contains('hidden'))nextCeleb()}
 function nextCeleb(){if(sheetKind||!queue.length||!$('#hatch').classList.contains('hidden'))return;openSheet(queue.shift(),'celeb');confetti()}
 function confetti(){const fx=$('#fx');const cols=['#ffd27a','#ff9fd0','#8ff0c8','#8fd0ff','#c9a4ff','#fff'];
@@ -3030,8 +3031,8 @@ const onbActions={
     if(b)b.innerHTML=L('Читать с ним','Read with him')+' 🖤';
     setTimeout(()=>{const l=$('#onbLine');if(l)onbType(l,L('«Я ждал, когда ты откроешь…»','“I was waiting for you to open it…”'))},700)},
   onbPick:d=>{S.onbAsk=1;onbClose();setTimeout(()=>A.choose({v:d.v}),120)},
-  onbLater:()=>{onbClose();A.chooseLater()},
-  onbRestore:()=>{onbClose();setTimeout(()=>openSheet(`<div class="hint" style="margin:0 0 10px;padding:10px 12px;border-radius:14px;background:var(--card2)">${L('Нажми «📂 Выбрать файл копии» ниже и выбери файл, который ты сохранила в старом трекере. Обычно он называется selmoire-kopiya и лежит в «Файлах».','Tap “📂 Choose backup file” below and pick the file you saved in the old tracker.')}</div>`+backupSheet(),'backup'),350)}};
+  onbLater:()=>{onbClose();S.mode='boys';if(!S.boysOn){S.boysOn=true;const e=newEgg(S.pets.map(p=>p.species),'boy');S.pets.push(e);S.activeBoy=e.id}S.seenIntro=true;save();tab='home';render();window.scrollTo(0,0)},
+  onbRestore:()=>{document.body.classList.add('onbsh');setTimeout(()=>{openSheet('<h3>'+L('Перенести прогресс','Bring your progress')+'</h3>'+`<div class="hint" style="margin:0 0 12px;padding:10px 12px;border-radius:14px;background:var(--card2)">${L('Нажми «📂 Выбрать файл копии» ниже и выбери файл, который ты сохранила в старом трекере. Обычно он называется selmoire-kopiya и лежит в «Файлах».','Tap “📂 Choose backup file” below and pick the file you saved in the old tracker.')}</div>`+(h=>h.slice(h.indexOf('<label')))(backupSheet()),'backup');document.body.classList.add('onbsh')},60)}};
 function onbAskHTML(){const p=activePet();if(!p)return '';const k=kindOf(p);
   const av=k==='boy'?`<img src="${onbEnvImg()||''}" alt="">`:eggSVG(p.species,0);
   const t=k==='boy'?[L('Что ты сейчас читаешь?','What are you reading now?'),L('Он хочет знать, к кому ему ревновать','He wants to know who to be jealous of')]:k==='fam'?[L('Что ты сейчас читаешь?','What are you reading now?'),L('Яйцо согреется от первых страниц','The egg warms with your first pages')]:[L('Что ты сейчас читаешь?','What are you reading now?'),L('От жанра зависит, кто проснется','The genre decides who wakes up')];
@@ -3085,11 +3086,11 @@ function applyRestore(txt){let s2;try{s2=JSON.parse(txt);if(!s2||!Array.isArray(
   const cv=s2._cov||{},spx=s2._sp||{};delete s2._cov;delete s2._sp;S=s2;Object.keys(spx).forEach(id=>{spines[id]=spx[id];IDB.set('sp:'+id,spx[id])});if(!S.liveMig){Object.values(S.books||{}).forEach(b=>{if(b.status==='done')b.live=1});S.liveMig=1}S.v=1;migrateBoys(S);let n=0,lost=0;
   Object.keys(cv).forEach(id=>{if(S.books[id]&&cv[id]){saveCover(id,cv[id]);S.books[id].hasCover=true;n++}});
   Object.values(S.books).forEach(b=>{if(!covers[b.id]){const c=lsGet(LSC+b.id);if(c)covers[b.id]=c;else{b.covTried=0;if(b.hasCover)lost++}}});
-  save();closeSheet(true);render();toast(L('Готово, всё восстановлено ✓'+(n?' Обложек: '+n:''),'Done, everything restored ✓'+(n?' Covers: '+n:'')))}
+  S.seenIntro=true;S.a2hsPop=1;onbClose();save();closeSheet(true);render();toast(L('Готово, всё восстановлено ✓'+(n?' Обложек: '+n:''),'Done, everything restored ✓'+(n?' Covers: '+n:'')))}
 async function fileBackup(){const t=JSON.stringify(bkPayload(true));const d=new Date(),p=x=>String(x).padStart(2,'0');
   const name=`selmoire-kopiya-${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}.json`;const blob=new Blob([t],{type:'application/json'});
   S.bkAt=Date.now();save();
-  try{const f=new File([blob],name,{type:'application/json'});if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:'Selmoire'});toast(L('Копия готова ✓','Backup ready ✓'));return}}catch(e){if(e&&e.name==='AbortError')return}
+  try{const f=new File([blob],name,{type:'application/json'});if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f]});toast(L('Копия готова ✓','Backup ready ✓'));return}}catch(e){if(e&&e.name==='AbortError')return}
   try{if(DL){await DL.save({filename:name,data:blob});toast(L('Файл сохранён ✓','File saved ✓'));return}}catch(e){}
   try{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},4000);toast(L('Файл скачан ✓ Ищи его в «Загрузках»','File downloaded ✓ Look in Downloads'))}catch(e){toast(L('Не получилось сохранить файл — скопируй текстом','Couldn’t save the file — copy as text'))}}
 
