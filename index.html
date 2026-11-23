@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<meta name="app-ver" content="2026-11-23-1">
+<meta name="app-ver" content="2026-11-23-2">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -948,7 +948,7 @@ svg .fmote{transform-box:fill-box;animation:fmote 6s ease-in-out infinite;opacit
 @media (prefers-reduced-motion:reduce){.hfx .hcandle,.hfx .hsmoke,svg .fmote{animation:none}}
 
 /* ===== выбор стиля ===== */
-.uiopts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:0 0 16px}
+.uiopts{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:0 0 16px}
 .uiopt{border:1px solid var(--line);background:var(--card2);color:var(--text);border-radius:16px;padding:8px 6px 10px;display:flex;flex-direction:column;align-items:center;gap:6px;font-weight:800;font-size:13px}
 .uiopt.on{outline:2px solid var(--gold);outline-offset:1px}
 .uiopt i{display:block;width:100%;aspect-ratio:3/4;border-radius:11px;position:relative;overflow:hidden}
@@ -998,6 +998,21 @@ body[data-ui=noir] .brandln{color:#ff3a4a}
 /* ===== Сияние ===== */
 body[data-ui=shine]{--uline:rgba(220,150,255,.24);--ucard:rgba(22,12,32,.55);--usheet:rgba(16,9,24,.94);--utab:rgba(28,16,40,.7);
   --gold:#a855f7;--gold2:#db2777;--onp:#fff;--accent:#e7a6ff;--bar1:#a855f7;--bar2:#ff6fd8}
+body[data-ui=frost] .stage>.foil{display:block}
+body[data-ui=frost]{--uline:rgba(220,150,255,.24);--ucard:rgba(22,12,32,.55);--usheet:rgba(16,9,24,.94);--utab:rgba(28,16,40,.7);
+  --gold:#7dd3fc;--gold2:#38bdf8;--onp:#fff;--accent:#e7a6ff;--bar1:#7dd3fc;--bar2:#9fd4ff}
+body[data-ui=frost] .top h1,body[data-ui=frost] .pet-info h2,body[data-ui=frost] .brandln{background:linear-gradient(100deg,#e6f3ff 0%,#9fd4ff 35%,#ffffff 50%,#bfe6ff 65%,#e6f3ff 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+body[data-ui=frost] .top .date{color:rgba(215,232,255,.65)}
+body[data-ui=frost] .stage{border:0!important;box-shadow:0 0 34px rgba(150,210,255,.32),0 24px 50px rgba(0,0,0,.6)}
+body[data-ui=frost] .stage>.foil{position:absolute;inset:0;border-radius:inherit;padding:2px;background:linear-gradient(140deg,#e6f3ff,#8ec8ff 30%,#2a4a7a 50%,#bfe6ff 75%,#e6f3ff);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none;z-index:6}
+body[data-ui=frost] .btn.primary{background:linear-gradient(100deg,#3b82f6,#38bdf8);color:#fff;box-shadow:0 0 24px rgba(125,200,255,.5)}
+body[data-ui=frost] .bar i{background:linear-gradient(90deg,#7dd3fc,#9fd4ff,#bfe6ff);box-shadow:0 0 10px rgba(125,200,255,.6)}
+body[data-ui=frost] .chip.gold,body[data-ui=frost] .chip.rar{color:#cfe9ff;border-color:rgba(160,210,255,.5)}
+body[data-ui=frost] .tabbar button{color:rgba(215,232,255,.55)}
+body[data-ui=frost] .tabbar button.on{color:#fff}
+body[data-ui=frost] .tabbar button.on svg{background:linear-gradient(140deg,#3b82f6,#38bdf8);box-shadow:0 0 18px rgba(125,200,255,.6)}
+body[data-ui=frost] .fab{background:linear-gradient(140deg,#3b82f6,#38bdf8);color:#fff;box-shadow:0 0 22px rgba(125,200,255,.6)}
+body[data-ui=frost] .card,body[data-ui=frost] .mini,body[data-ui=frost] .book{border-color:rgba(200,228,255,.22)!important;box-shadow:inset 0 1px 0 rgba(235,245,255,.12)}.uiopt i.u-frost{background:radial-gradient(90% 50% at 50% 0,rgba(120,180,255,.45),transparent 70%),#0a1220}.uiopt i.u-frost::before{content:'';position:absolute;left:16%;right:16%;top:10%;bottom:34%;border-radius:10px;border:2px solid rgba(200,230,255,.8);box-shadow:0 0 12px rgba(150,210,255,.6),inset 0 0 10px rgba(180,220,255,.35)}.uiopt i.u-frost::after{content:'';position:absolute;left:14%;right:14%;bottom:12%;height:14%;border-radius:20px;background:linear-gradient(100deg,#3b82f6,#38bdf8);box-shadow:0 0 10px rgba(125,200,255,.6)}
 body[data-ui=shine] .top h1,body[data-ui=shine] .pet-info h2,body[data-ui=shine] .brandln{background:linear-gradient(100deg,#c79bff 0%,#ff6fd8 35%,#ffd1f4 50%,#7fd8ff 65%,#c79bff 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
 body[data-ui=shine] .top .date{color:rgba(230,210,245,.6)}
 body[data-ui=shine] .stage{border:0!important;box-shadow:0 0 34px rgba(220,90,220,.3),0 24px 50px rgba(0,0,0,.6)}
@@ -2151,12 +2166,12 @@ async function drawCover(x,b,cx,cy,cw,ch,rad){x.save();x.shadowColor='rgba(0,0,0
 function brandTop(x,y){const ui=document.body.dataset.ui||'';x.save();x.textAlign='left';const t='SELMOIRE',sp=12;x.font='800 26px Nunito, system-ui, sans-serif';
   let w=x.measureText('☾').width+10;for(const ch of t)w+=x.measureText(ch).width+sp;w-=sp;x.font='700 24px Nunito, system-ui, sans-serif';const h='  ·  @selmoire.books';const hw=x.measureText(h).width;
   let cx=540-(w+hw)/2;const col=ui==='noir'?'#ff3a4a':(cssVar('--accent')||'#c79bff');
-  if(ui==='shine'){const g=x.createLinearGradient(cx,0,cx+w,0);g.addColorStop(0,'#c79bff');g.addColorStop(.45,'#ff6fd8');g.addColorStop(1,'#7fd8ff');x.fillStyle=g}else x.fillStyle=col;
+  if(ui==='shine'||ui==='frost'){const g=x.createLinearGradient(cx,0,cx+w,0);if(ui==='frost'){g.addColorStop(0,'#e6f3ff');g.addColorStop(.5,'#9fd4ff');g.addColorStop(1,'#ffffff')}else{g.addColorStop(0,'#c79bff');g.addColorStop(.45,'#ff6fd8');g.addColorStop(1,'#7fd8ff')}x.fillStyle=g}else x.fillStyle=col;
   x.font='800 26px Nunito, system-ui, sans-serif';x.fillText('☾',cx,y);cx+=x.measureText('☾').width+10;for(const ch of t){x.fillText(ch,cx,y);cx+=x.measureText(ch).width+sp}cx-=sp;
   x.fillStyle='rgba(255,255,255,.78)';x.font='700 24px Nunito, system-ui, sans-serif';x.fillText(h,cx,y);x.restore()}
 function brandMark(x,y){const ui=document.body.dataset.ui||'',t='SELMOIRE',sp=22;x.save();x.textAlign='left';x.font='400 52px Nunito, system-ui, sans-serif';const mw=x.measureText('☾').width+18;x.font='800 44px Nunito, system-ui, sans-serif';
   let w=mw;for(const ch of t)w+=x.measureText(ch).width+sp;w-=sp;let cx=540-w/2;
-  if(ui==='shine'){const g=x.createLinearGradient(cx,0,cx+w,0);g.addColorStop(0,'#c79bff');g.addColorStop(.45,'#ff6fd8');g.addColorStop(1,'#7fd8ff');x.fillStyle=g}else x.fillStyle=ui==='noir'?'#ff3a4a':(cssVar('--accent')||'#c79bff');
+  if(ui==='shine'||ui==='frost'){const g=x.createLinearGradient(cx,0,cx+w,0);if(ui==='frost'){g.addColorStop(0,'#e6f3ff');g.addColorStop(.5,'#9fd4ff');g.addColorStop(1,'#ffffff')}else{g.addColorStop(0,'#c79bff');g.addColorStop(.45,'#ff6fd8');g.addColorStop(1,'#7fd8ff')}x.fillStyle=g}else x.fillStyle=ui==='noir'?'#ff3a4a':(cssVar('--accent')||'#c79bff');
   x.shadowColor='rgba(0,0,0,.45)';x.shadowBlur=14;x.font='400 52px Nunito, system-ui, sans-serif';x.fillText('☾',cx,y+2);cx+=mw;x.font='800 44px Nunito, system-ui, sans-serif';for(const ch of t){x.fillText(ch,cx,y);cx+=x.measureText(ch).width+sp}
   x.textAlign='center';x.fillStyle='rgba(255,255,255,.88)';x.font='700 32px Nunito, system-ui, sans-serif';x.fillText('@selmoire.books',540,y+58);x.restore()}
 const CARD_HERO_DONE=['Я ревновал к нему все {d}','Надеюсь, он был хуже меня','Ты вздыхала на каждой странице. Я все слышал','Теперь моя очередь','Закрыла книгу? Иди сюда','Я видел, как ты улыбалась. Не мне','Он вымышленный. Я нет','Еще одна книга, и я начну ревновать всерьез'];
@@ -2446,7 +2461,7 @@ const THEMES=[{id:'night',name:'Ночь',sw:'linear-gradient(150deg,#45308a,#13
 const winterOn=()=>{const m=new Date().getMonth();return m>=10||m<=1};
 const themesFor=m=>THEMES.filter(t=>t.set==='w'?winterOn():m==='boy'?t.set==='b':m==='fam'?t.set==='f':!t.boy);
 const curTheme=()=>{const m=curKind(),id=m==='fam'?S.themeFam:m==='boy'?S.themeBoys:S.theme;return themesFor(m).some(t=>t.id===id)?id:(m==='fam'?'witch':m==='boy'?'library':'night')};
-const curUI=()=>{const k=curKind();const u=k==='boy'?S.uiBoys:k==='fam'?S.uiFam:'';return u==='noir'||u==='shine'?u:''};
+const curUI=()=>{const k=curKind();const u=k==='boy'?S.uiBoys:k==='fam'?S.uiFam:'';return u==='noir'||u==='shine'||u==='frost'?u:''};
 function applyTheme(){const t=THEMES.find(x=>x.id===curTheme())||THEMES[0];document.body.dataset.theme=t.id;{const u=curUI();if(u)document.body.dataset.ui=u;else delete document.body.dataset.ui}const m=document.querySelector('meta[name=theme-color]');if(m)m.content=t.meta;
   document.body.classList.toggle('dr',!!t.boy);{let sc=document.getElementById('scene');if(sc&&sc.dataset.t!==t.id){sc.remove();sc=null}if(t.boy&&!sc){sc=document.createElement('div');sc.id='scene';sc.dataset.t=t.id;sc.innerHTML=sceneSVG(t.id)+(THEME_PHOTO[t.id]?phBg(t.id)+'<div class="ph-dim"></div>':'');if(THEME_PHOTO[t.id])sc.classList.add('photo');document.body.prepend(sc)}}let pe=document.getElementById('petals');if(pe&&pe.dataset.t!==t.id){pe.remove();pe=null}if(t.boy){if(!pe){pe=document.createElement('div');pe.id='petals';pe.dataset.t=t.id;pe.className='petals';const RAIN=['penthouse','neon','lamp'].includes(t.id),N=RAIN?46:/^w_/.test(t.id)?44:t.id==='golden'?22:t.id==='gothic'?20:t.id==='noir'?12:16;
 for(let i=0;i<N;i++){const e=document.createElement('i');e.style.left=(RAIN?-10+Math.random()*120:Math.random()*100)+'%';
@@ -2808,7 +2823,7 @@ function settingsHTML(){const th=THEMES.find(t=>t.id===curTheme())||THEMES[0];
 <div class="card slist">${setRow('guide','📘',L('Как пользоваться','How to use'),L('Короткая инструкция по приложению','A quick guide to the app'))}${setRow('feedback','💌',L('Пожелания и идеи','Ideas and wishes'),L('Напиши, что сделать лучше','Tell us what to improve'))}</div>
 <p class="hint center" style="margin-top:18px">${BOYM()?'Книжный бойфренд 🖤':FAMM()?'Книжный хранитель 🔮':'Книжный дух 🐾'}</p>`}
 function themeSheet(){const k=curKind(),u=curUI();const TB=t=>{const ph=THEME_PHOTO[t.id]&&typeof BG_IMG!=='undefined'&&BG_IMG[t.id];const th=ph?bgThumb(t.id):null;return `<button data-a="theme" data-v="${t.id}" class="${curTheme()===t.id?'on':''}"><i ${t.boy?'class="sct"':''} data-thumb="${ph?t.id:''}" style="background:${th?`url(${th}) center/cover`:t.sw}">${t.boy&&!ph?sceneSVG(t.id,true):''}</i>${t.name}</button>`};
-  const ui=k==='pet'?'':`<div class="sec-h">${L('Стиль','Style')}</div><div class="uiopts">${[['',L('Как сейчас','Classic'),'u-def'],['noir','Нуар','u-noir'],['shine',L('Сияние','Shine'),'u-shine']].map(([v,n,c])=>`<button class="uiopt ${u===v?'on':''}" data-a="uiPick" data-v="${v}"><i class="${c}"></i>${n}</button>`).join('')}</div><div class="sec-h">${L('Фон','Background')}</div>`;
+  const ui=k==='pet'?'':`<div class="sec-h">${L('Стиль','Style')}</div><div class="uiopts">${[['',L('Как сейчас','Classic'),'u-def'],['noir','Нуар','u-noir'],['shine',L('Сияние','Shine'),'u-shine'],['frost',L('Иней','Frost'),'u-frost']].map(([v,n,c])=>`<button class="uiopt ${u===v?'on':''}" data-a="uiPick" data-v="${v}"><i class="${c}"></i>${n}</button>`).join('')}</div><div class="sec-h">${L('Фон','Background')}</div>`;
   return `<h3>Оформление</h3><p class="hint" style="margin:-6px 0 12px">${BOYM()?'Для режима бойфрендов. У духов свое.':FAMM()?'Для режима хранителей. У других режимов свое.':'Тема для режима духов. У бойфрендов своя.'}</p>${ui}<div class="themes" style="grid-template-columns:repeat(3,1fr);gap:14px">${themesFor(k).filter(t=>t.set!=='w').map(TB).join('')}</div>${themesFor(k).some(t=>t.set==='w')?`<div class="sec-h" style="margin-top:18px">❄️ ${L('Зима','Winter')}<small style="font-weight:600;opacity:.7;margin-left:6px">${L('до конца февраля','until end of February')}</small></div><div class="themes" style="grid-template-columns:repeat(3,1fr);gap:14px">${themesFor(k).filter(t=>t.set==='w').map(TB).join('')}</div>`:''}`}
 const BG_TH={};
 function bgThumb(id){if(BG_TH[id])return BG_TH[id];if(BG_TH[id]===0)return null;BG_TH[id]=0;const im=new Image();im.onload=()=>{try{const cv=document.createElement('canvas');const W=180,H=240;cv.width=W;cv.height=H;const x=cv.getContext('2d');const sc=Math.max(W/im.width,H/im.height);x.drawImage(im,(W-im.width*sc)/2,(H-im.height*sc)/2,im.width*sc,im.height*sc);BG_TH[id]=cv.toDataURL('image/jpeg',.8);document.querySelectorAll(`[data-thumb="${id}"]`).forEach(e=>{e.style.background=`url(${BG_TH[id]}) center/cover`})}catch(e){}};im.src=BG_IMG[id];return null}
